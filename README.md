@@ -24,11 +24,54 @@ A travel web application that allows members to join a pack and plan a vacation 
 
 > Shows Pack Information, and has links to the schedules, expenses and photo sections. Pack Code and Password are distributed to other people in order for them to join the pack as well.
 
+```
+Backend action for joining a pack
+
+export const getPacks = (data) => (dispatch) => (
+  APIUtil.getPacks(data)
+    .then(pack => dispatch(receivePack(pack)))
+    .catch(err => console.log(err))
+)
+
+router.post('/join', (req, res) => {
+  Pack.findOne({ _id: req.body.id })
+    .then(pack => {
+      if(req.body.password === pack.password) {
+        return res.json(pack._id)
+      } 
+      return res.status(400).json({nopackfound: 'Please check the pack name and password combination' });
+    })
+    .catch(err => res.status(404).json({ nopackfound: 'No packs found' }));
+
+});
+```
+
 ### Expenses
 
 ![Pack Expenses](/readme_media/expenses.gif)
 
 > Expenses allow pack members to keep track of any debt owed to other pack members. Also has a breakdown of what the money is being spent on.
+
+```
+New Payment route
+
+router.post("/new", (req, res) => {
+
+  const newPayment = new Payment({
+    title: req.body.title,
+    spotterId: req.body.spotterId,
+    chargeeIds: req.body.chargeeIds,
+    amount: req.body.amount,
+    category: req.body.category
+  });
+  
+  let parsed = parseURL(req.baseUrl);
+  Pack.updateOne(
+    { _id: parsed },
+    { $push: { payments: newPayment } }
+  ).then(() => res.json(newPayment));
+});
+```
 
 ### Schedule and Events
 
