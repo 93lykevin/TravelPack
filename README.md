@@ -35,7 +35,7 @@ A travel web application that allows members to join a pack and plan a vacation 
 > Allow pack members to create schedules and events for their pack. Schedules can have many events.
 
 ```
-Schedule's Backend API for updating nested objects with MongoDB.
+Schedule's Backend route for updating nested objects with MongoDB.
 
 router.put("/:scheduleId", (req, res) => {
   let packId = parseURL(req.baseUrl);
@@ -58,6 +58,55 @@ Event's axios API call. Deeply nested.
 export const updateEvent = data => {
   return axios.put(`api/packs/${data.packId}/schedules/${data.scheduleId}/events/${data.eventId}`, data)
 }
+```
+### Photos
+
+> Allow pack members to upload and share photos with all other members of the pack.
+
+```
+Photo upload route using AWS
+
+router.post("/upload", upload.single("file"), function(req, res) {
+  
+  const file = req.file;
+  const s3FileURL = keys.AWS_Uploaded_File_URL_LINK;
+
+  let s3bucket = new AWS.S3({
+    accessKeyId: keys.AWS_ACCESS_KEY_ID,
+    secretAccessKey: keys.AWS_SECRET_ACCESS_KEY,
+    region: keys.AWS_REGION
+  });
+
+  //Where you want to store your file
+
+  var params = {
+    Bucket: keys.AWS_BUCKET_NAME,
+    Key: file.originalname,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+    ACL: "public-read"
+  };
+
+  s3bucket.upload(params, function(err, data) {
+    if (err) {
+      res.status(500).json({ error: true, Message: err });
+    } else {
+      res.send({ data });
+      var newFileUploaded = {
+        description: req.body.description,
+        fileLink: s3FileURL + file.originalname,
+        s3_key: params.Key
+      };
+      var document = new DOCUMENT(newFileUploaded);
+      document.save(function(error, newFile) {
+        if (error) {
+          throw error;
+        }
+      });
+    }
+  });
+
+});
 ```
 
 ---
