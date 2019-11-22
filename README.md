@@ -1,5 +1,9 @@
 # TravelPack
 
+## Link
+
+[TravelPack](http://travel-pack.herokuapp.com/)
+
 ## Description
 
 A travel web application that allows members to join a pack and plan a vacation together. Users can join multiple packs, and each pack is composed of one or more schedule(s) created by the members, which then filled with events. Users can also keep track of money owed to other pack members as well as upload photos to the group.
@@ -84,10 +88,6 @@ export const deleteSchedule = data => {
     />  
   </div>
   ```
-
-## Link
-
-[TravelPack](http://travel-pack.herokuapp.com/)
 
 ## Site Features
 
