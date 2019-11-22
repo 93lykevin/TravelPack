@@ -3,6 +3,7 @@
 ## Link
 
 [TravelPack](http://travel-pack.herokuapp.com/)
+![Home](/readme_media/home.png)
 
 ## Description
 
